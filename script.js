@@ -1,31 +1,31 @@
 const gameScreen = document.getElementById('game-screen');
 let pixels;
 let snake=[];
-let direction=-10;
 let apple;
+let n = 20;
+let direction=-n;
 let interval;
 
 const renderPixels = () => {
     let pixel = '';
-    for(let i=0;i<100;i++) {
+    for(let i=0;i<Math.pow(n,2);i++) {
         pixel += `<div class="pixel"></div>`;
     }
+    gameScreen.style.gridTemplateColumns = `repeat(${n},1fr)`;
     gameScreen.innerHTML = pixel;
 }
 
 const renderStart = () => {
     pixels = document.querySelectorAll(".pixel");
-    pixels[55].classList.add("snake"); 
-    pixels[65].classList.add("snake"); 
-    pixels[75].classList.add("snake"); 
-    pixels[85].classList.add("snake"); 
-    snake.push(55,65,75,85);
+    let start = Math.floor(Math.pow(n,2)/2) + Math.floor(n/2);
+    pixels[start].classList.add("snake"); 
+    snake.push(start);
 }
 
 const renderSnake = () => {
-    let head = snake[0]%10;
-    const leftRightBoundary = (head==0 && direction==-1) || (head==9 && direction==1);
-    const upDownBoundary = (snake[0]<10 && direction==-10) || (snake[0]>89 && direction==10); 
+    let head = snake[0]%n;
+    const leftRightBoundary = (head==0 && direction==-1) || (head==n-1 && direction==1);
+    const upDownBoundary = (snake[0]<n && direction==-n) || (snake[0]>=Math.pow(n,2)-n && direction==n); 
     if(leftRightBoundary || upDownBoundary || pixels[snake[0]+direction].classList.contains("snake")) {
         clearInterval(interval);
         return;
@@ -47,13 +47,13 @@ const changeDirection = (e) => {
         case 37:    direction = direction!=1?-1:1;
                     break;
         
-        case 38:    direction = direction!=10?-10:10;
+        case 38:    direction = direction!=n?-n:n;
                     break;
             
         case 39:    direction = direction!=-1?1:-1;
                     break;
 
-        case 40:    direction = direction!=-10?10:-10;
+        case 40:    direction = direction!=-n?n:-n;
                     break;
 
         default:    return;
@@ -75,5 +75,5 @@ const spawnApple = () => {
 renderPixels();
 renderStart();
 spawnApple();
-interval = setInterval(renderSnake,500);
+interval = setInterval(renderSnake,400);
 window.addEventListener('keydown',changeDirection);
